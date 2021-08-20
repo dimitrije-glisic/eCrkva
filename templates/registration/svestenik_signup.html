@@ -1,0 +1,42 @@
+{%extends 'base.html'%}
+
+{%load crispy_forms_tags%}
+
+
+{%block navsection%}
+
+{%endblock navsection%}
+
+{%block content%}
+
+<div style="margin-top: 30px">
+<form method="post">
+	{% csrf_token %}
+	{{form|crispy}}
+	<input type="submit" name="submit" value="Prijava">
+</form>
+</div>
+
+
+<script type="text/javascript">
+	
+$(document).ready(function(){
+		$("#hint_id_username").html("");
+		$("#hint_id_password1").html("");
+		$("#hint_id_password2").html("");
+
+		$("label[for='id_username']").html("Корисничко име*");
+		$("label[for='id_password1']").html("Лозинка*");
+		$("label[for='id_password2']").html("Поновите лозинку*");
+		
+
+	});
+
+    // makeAutoCompleteForParohija(document.getElementById("parohija"));
+
+
+
+</script>
+
+
+{%endblock content%}

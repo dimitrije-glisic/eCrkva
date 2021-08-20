@@ -1,0 +1,31 @@
+{%extends 'base.html'%}
+
+{%load calc_tags %}
+
+{%block content%}
+
+<div style="margin-top:100px ;">
+    <table class="table">
+
+        <tr>
+            <th>Слава</th>
+            <th>Број домаћинстава</th>
+            <th style="color:green">Број освештених водица</th>
+            <th style="color:orange">Број неосвештених водица</th>
+        </tr>
+
+        
+        {%for slava,broj in slave%}
+
+            <tr>
+                <td>{{slava}}</td>
+                <td>{{broj}} &nbsp; ({{broj|div:ukupno|mul:100|floatformat}}&percnt;)</td>
+                <td>{{slave_i_slavske_vodice|kljuc:slava}} &nbsp;({{slave_i_slavske_vodice|kljuc:slava|div:broj|mul:100|floatformat}} &percnt;)</td>
+                <td>{{slave_i_slavske_vodice|kljuc:slava|minus:broj}}&nbsp;({{slave_i_slavske_vodice|kljuc:slava|minus:broj|div:broj|mul:100|floatformat}}&percnt;)</td>
+            </tr>
+
+        {%endfor%}
+
+    </table>
+</div>
+{%endblock content%}

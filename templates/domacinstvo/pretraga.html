@@ -1,0 +1,52 @@
+{%extends 'base.html'%}
+
+{%block title%}
+	<title>Pretraga</title>
+{%endblock title%}
+
+{%block content%}
+
+
+	<form action=".">
+		<table style="border-collapse: separate; border-spacing:0 1em;">
+			<tr>
+				<td  style="padding-right:30px">
+					<label for="slava">Слава</label>
+				<td>
+					<input class="ml-4" id="slava" name="slava" type="text">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="prezime">Презиме</label>
+				</td>
+				<td>
+					<input class="ml-4" id="prezime" name="prezime" type="text">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="ulica">Улица</label>
+				</td>
+				<td>
+					<input class="ml-4" id="ulica" name="ulica" type="text">
+				</td>
+			<table>	
+			<button type="submit" class="btn btn-primary mt-3">Претрага</button>
+
+	</form>
+
+	<hr>
+
+	<div class="content-section">
+		<ul>
+			{%for domacinstvo in domacinstva%}
+				<li style="color: {%if domacinstvo.slavska_vodica and domacinstvo.vaskrsnja_vodica%}green{%elif domacinstvo.slavska_vodica or domacinstvo.vaskrsnja_vodica%}orange{%else%}red{%endif%}">
+					<a href="{%url 'prikazi_domacinstvo' domacinstvo.id%}">{{domacinstvo}}</a>
+				</li>
+			{%endfor%}
+		</ul>
+	</div>
+
+
+{%endblock content%}

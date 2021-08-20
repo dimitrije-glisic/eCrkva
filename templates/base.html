@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
+
+
+
+
+  	{%block head%}
+  		
+  	{%endblock head%}
+
+
+
+
+	{%block title%}
+	
+	{%endblock title%}
+</head>
+<body>
+		
+	{%block navsection%}
+
+	<nav class="navbar">
+		    <ul class="nav navbar-nav">
+		      <li class="active"><a href="{%url 'domacinstvo-pocetna'%}">Почетна</a></li>
+		      <li><a href="{%url 'pretraga'%}">Претрага</a></li>
+		      <li><a href="{%url 'planer'%}">Планер</a></li>
+		      <li><a href="{%url 'dodaj_domacinstvo'%}">Ново домаћинство</a></li>
+		      <li><a href="{%url 'izvestaji'%}">Извештаји</a></li>
+		    </ul>
+		    <ul class="nav navbar-nav navbar-right">
+		      
+		    {%if user.is_authenticated%}
+		    	<li><a href="{%url 'logout' %}">Одјава</a></li>
+		    	<li><a href="#">Профил</a></li>
+		    	
+		    {%else%}
+		      <li><a href="{%url 'svestenik_signup' %}">Регистрација</a></li>
+		      <li><a href="{%url 'login' %}">Пријава</a></li>
+		     {%endif%}
+		    </ul>
+	</nav>
+
+	{%endblock navsection%}
+
+		{%if messages%}
+			{%for message in messages%}
+				<div class="alert alert-{%if message.tags == 'error'%}danger
+				{%else%}{{message.tags}}
+				{%endif%}
+				" 
+				style="text-align: center;">
+					{{message}}
+				</div>	
+				{%endfor%}
+		{%endif%}
+
+	<div class="container">
+		{%block content%} 
+		{%endblock content%}
+	</div>
+
+	
+
+
+    {%block script-section%}
+
+    {%endblock script-section%}
+
+
+</body>
+</html>

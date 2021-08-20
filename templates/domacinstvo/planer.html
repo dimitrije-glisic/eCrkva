@@ -1,0 +1,186 @@
+{%extends 'base.html'%}
+
+{%load i18n%}
+
+{%block content%}
+
+{%block head%}
+	
+	{%load static%}
+	<link href="{%static 'css/kalendar.css'%}" rel="stylesheet">
+
+
+	<style>
+		
+		.datum_button{
+			background: none!important;
+			border: none;
+			padding: 0!important;
+			/*optional*/
+			font-family: arial, sans-serif;
+			/*input has OS specific font-family*/
+			cursor: pointer;" 
+		}
+
+
+	</style>
+
+{%endblock head%}
+
+<div class="mesec">
+	<ul>
+		<li class="prev"><a href="{%url 'api_smanji_mesec'%}" style="color:white">&#10094;</a></li>
+		<li class="next"><a href="{%url 'api_povecaj_mesec'%}" style="color: white">&#10095;</a></li>
+		<li>
+			{%language 'sr'%}
+				{{mesec_za_prikaz|date:"E"}}
+			{%endlanguage%}
+			<br>
+			<span style="font-size: 18px">{{mesec_za_prikaz|date:"Y"}}</span>
+		</li>
+	</ul>
+</div>
+
+
+<ul class="nazivi-dana">
+	<li>Пон</li>
+	<li>Ут</li>
+	<li>Ср</li>
+	<li>Чет</li>
+	<li>Пет</li>
+	<li>Суб</li>
+	<li>Нед</li>
+</ul>
+
+<ul class="dani">
+	{%for idx, d in enum_datumi%}
+
+		{%if idx < idx_prethodnih_datuma%}
+		<li style="color:#ccc">
+		<form action="{%url 'api_selektuj_datum' d%}">	
+			<button  class="datum_button btn-block"
+			>
+				{{d.day}}
+			</button>
+		</form>
+		</li>
+		{%elif idx >= idx_narednih_datuma%}
+		<li style="color:#ccc">
+			<form action="{%url 'api_selektuj_datum' d%}">
+			<button class="datum_button btn-block"
+			>
+				{{d.day}}
+			</button>
+		</form>
+		</li>
+		{%else%}
+		<li>
+			<form action="{%url 'api_selektuj_datum' d%}">
+			<button class="datum_button btn-block"
+			>
+				{{d.day}}
+			</button>
+		</form>
+		</li>
+		{%endif%}
+
+	{%endfor%}
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+<h3 style="text-align: center; margin: 70px 0px">
+	{%language 'sr'%}
+		{{selektovan_datum|date:"j. E, Y "}}
+	{%endlanguage%}
+
+</h3>
+
+{%if dogadjaji%}
+	<table class="table">
+		<tr>
+			<th>Догађај</th>
+			<th>Време</th>
+			<th></th>
+			<th></th>
+			
+		</tr>
+		{%for dogadjaj in dogadjaji%}
+		<tr>
+			<td style="width: 250px">{{dogadjaj.tip_dogadjaja}}</td>
+			<td>{{dogadjaj.vreme|date:"G:i"}}</td>
+			<td class="text-right">
+				<form action="{%url 'prikazi_domacinstvo' dogadjaj.domacinstvo.id%}">
+					<button type="submit" class="btn btn-info">детаљи</button>
+				</form>
+			</td>
+			<td class="text-right">
+				<button class="btn btn-danger" onclick="otkaziDogadjaj({{dogadjaj.id}})">откажи</button>
+			</td>
+		</tr>
+		{%endfor%}
+	</table>
+
+{%else%}
+
+<h3 style="text-align: center; margin: 20%; color:blue">Немате обавеза данас</h3>
+
+{%endif%}
+
+
+<div style="text-align: center">
+<form action="." method="post">
+	{% csrf_token %}
+	<input 
+		type="submit" 
+		name="prethodni_dan" 
+		value="Претходни дан"
+		class="btn btn-info"
+		
+		>
+	<input 
+		type="submit" 
+		name="naredni_dan" 
+		value="Наредни дан"
+		class="btn btn-info"
+		>
+</form>
+
+</div>
+
+
+{%load static%}
+<script type="text/javascript">
+	
+	function otkaziDogadjaj(id){
+
+		let xhttp = new XMLHttpRequest();
+    	xhttp.open("POST","{%url 'api_otkazi_dogadjaj'%}",true);
+    	xhttp.setRequestHeader("X-CSRFToken","{{csrf_token}}");
+		xhttp.setRequestHeader("Content-Type", "application/json");
+    	podaci = JSON.stringify({'id': id})
+    	xhttp.send(podaci);
+
+	    xhttp.onreadystatechange = function(){
+	      if(this.readyState == 4 && this.status == 200){
+	          console.log('dogadjaj otkazan');
+	          location.reload(true);
+	      }
+	    }
+	}
+
+
+
+</script>
+	
+
+{%endblock content%}

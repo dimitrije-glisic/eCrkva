@@ -1,0 +1,290 @@
+
+{%extends 'base.html'%}
+
+
+
+
+
+{%block head%}
+	
+{%load static%}	
+
+{%endblock head%}
+
+
+{%load crispy_forms_tags%}
+
+
+{%block content%}
+
+<h3 style="text-align: center;color:blue">Ново домаћинство</h3>
+
+
+
+
+
+ <form autocomplete="off" action=""  method="post"  >
+ 	{% csrf_token %}
+
+  <div class="form-group">
+    <label for="ime">Име домаћина</label>
+    <input type="text" class="form-control" id="ime" name="ime" required>
+  </div>
+  <div class="form-group">
+    <label for="prezime">Презиме</label>
+    <input type="text" class="form-control" id="prezime" name="prezime" required>
+  </div>
+
+  <div class="form-group">
+    <label for="slava">Слава</label>
+    <div class="autocomplete" style="width:100%">
+			<input id="slava" name="slava" type="text">
+		</div>
+  </div>
+
+  <div class="form-group">
+    <label for="prezime">Славска водица:</label>
+    <select class="form-control" id="slavska_vodica" name="slavska_vodica">
+    	<option value="0">Нема</option>
+    	<option value="1">Има</option>
+    </select>
+  </div>
+ <div class="form-group">
+    <label for="prezime">Васкршња водица:</label>
+    <select class="form-control" id="vaskrsnja_vodica" name="vaskrsnja_vodica">
+    	<option value="0">Нема</option>
+    	<option value="1">Има</option>
+    </select>
+  </div>
+
+<br>
+
+
+  <label>Ukucani</label>
+  <button	id="add" 
+          type="button" 
+          class="btn btn-primary"
+          style="margin-left:20px"
+    			onclick="noviProzorDodajUkucanina()">+</button>
+	
+	<br>
+	<ul id="ukucani">
+  </ul>
+<br>
+
+  <label>Nareceni</label>
+  <button  id="add"
+      type="button" 
+      class="btn btn-primary"
+      style="margin-left: 15px"
+      onclick="noviProzorDodajNarecenog()">+</button>
+  <br>
+  <ul id="nareceni">
+  </ul>
+		
+<br>
+
+  <label>Preminuli</label>
+ <button  id="add" 
+      type="button" 
+      class="btn btn-primary"
+      style="margin-left: 10px"
+      onclick="noviProzorDodajPreminulog()">+</button>
+  <br>
+  <ul id="preminuli">
+  </ul>
+
+  <hr>
+
+  <h3>Адреса</h3>
+  <br>
+
+  <!-- Adresa -->
+
+   <div class="form-group">
+    <label for="grad">Град</label>
+    <div class="autocomplete" style="width:100%">
+      <input id="grad" name="grad" type="text">
+    </div>
+  </div>
+
+   <div class="form-group">
+    <label for="postanski_broj">Поштански број</label>
+    <input type="text" class="form-control" id="postanski_broj" name="postanski_broj" required>
+  </div>
+
+
+   <div class="form-group">
+    <label for="ulica">Улица</label>
+    <input type="text" class="form-control" id="ulica" name="ulica" required>
+  </div>
+
+  <div class="form-group">
+    <label for="broj">Број</label>
+    <input type="text" class="form-control" id="broj" name="broj" required>
+  </div>
+
+  <div class="form-group">
+    <label for="ulaz">Улаз</label>
+    <input type="text" class="form-control" id="ulaz" name="ulaz">
+  </div>
+
+  <div class="form-group">
+    <label for="broj_stana">Број стана</label>
+    <input type="text" class="form-control" id="broj_stana" name="broj_stana">
+  </div>
+
+
+
+
+
+  <hr>
+  <button type="submit" class="btn btn-primary" style="font-size:100%  ">Сачувај домаћинство</button>
+
+
+
+</form>
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="{%static 'js/searchable.js'%}"></script>
+<link href="{%static 'css/dodaj_domacinstvo.css'%}" rel="stylesheet">
+
+<script type="text/javascript">
+
+    function ukucaniOsluskivac(){
+      let xhttp = new XMLHttpRequest();
+      xhttp.open("GET","{%url 'api_ukucani_temp'%}",true);
+      xhttp.setRequestHeader("X-CSRFToken","{{csrf_token}}")
+      xhttp.send();
+
+
+      xhttp.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status==200){
+            const response = JSON.parse(xhttp.responseText);
+            ukucani = Object.values(response);
+            l = Object.keys(response).length;
+            console.log(ukucani);
+
+            ukucani = document.getElementById('ukucani');
+            ukucani.innerHTML="";
+            for(let i=0; i<l;i++){
+              let u = document.createElement("LI");
+              let ime =document.createTextNode(Object.values(response)[i]);
+              u.appendChild(ime);
+              ukucani.appendChild(u);
+            }
+
+        }
+    }
+  }
+
+
+
+    function nareceniOsluskivac(){
+      let xhttp = new XMLHttpRequest();
+      xhttp.open("GET","{%url 'api_nareceni_temp'%}",true);
+      xhttp.setRequestHeader("X-CSRFToken","{{csrf_token}}")
+      xhttp.send();
+
+
+      xhttp.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status==200){
+            const response = JSON.parse(xhttp.responseText);
+            nareceni = Object.values(response);
+            l = Object.keys(response).length;
+            console.log(nareceni);
+
+            nareceni = document.getElementById('nareceni');
+            nareceni.innerHTML="";
+            for(let i=0; i<l;i++){
+              let u = document.createElement("LI");
+              let ime =document.createTextNode(Object.values(response)[i]);
+              u.appendChild(ime);
+              nareceni.appendChild(u);
+            }
+
+        }
+    }
+  }
+
+
+
+
+    function preminuliOsluskivac(){
+      let xhttp = new XMLHttpRequest();
+      xhttp.open("GET","{%url 'api_preminuli_temp'%}",true);
+      xhttp.setRequestHeader("X-CSRFToken","{{csrf_token}}")
+      xhttp.send();
+
+
+      xhttp.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status==200){
+            const response = JSON.parse(xhttp.responseText);
+            preminuli = Object.values(response);
+            l = Object.keys(response).length;
+            console.log(preminuli);
+
+            preminuli = document.getElementById('preminuli');
+            preminuli.innerHTML="";
+            for(let i=0; i<l;i++){
+              let u = document.createElement("LI");
+              let ime =document.createTextNode(Object.values(response)[i]);
+              u.appendChild(ime);
+              preminuli.appendChild(u);
+            }
+
+        }
+    }
+  }
+
+    function noviProzorDodajUkucanina(){
+      setInterval(ukucaniOsluskivac,2000);
+      window.open("{%url 'dodaj_ukucanina' %}","novi_ukucanin" , "width=700, height=400, top=200, left=800");
+    }
+
+    function noviProzorDodajPreminulog(){
+       setInterval(preminuliOsluskivac,2000);
+       window.open("{%url 'dodaj_preminulog' %}","npreminli" , "width=700, height=400, top=200, left=800");      
+    }
+
+    function noviProzorDodajNarecenog(){
+       setInterval(nareceniOsluskivac,2000);
+       window.open("{%url 'dodaj_narecenog' %}","nnareceni" , "width=700, height=400, top=200, left=800");      
+    }
+
+    makeAutoCompleteForSlave(document.getElementById("slava"));
+
+    makeAutoCompleteForGrad(document.getElementById("grad"));
+
+
+
+    //napuni grad i postanski broj shodno parohiji
+    $(document).ready(function(){
+      let xhttp = new XMLHttpRequest();
+      xhttp.open("GET","{%url 'api_grad'%}",true);
+      xhttp.setRequestHeader("X-CSRFToken","{{csrf_token}}")
+      xhttp.send();
+
+      xhttp.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status==200){
+            const response = JSON.parse(xhttp.responseText);
+            values = Object.values(response)
+            console.log(values);
+            document.getElementById("grad").value=values[0];
+            document.getElementById("postanski_broj").value = values[1];
+        }
+    }
+
+    });
+
+
+</script>
+
+
+
+
+ {%endblock%}

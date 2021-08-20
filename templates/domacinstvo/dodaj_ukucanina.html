@@ -1,0 +1,54 @@
+
+{%extends 'base.html'%}
+
+
+{%block navsection%}
+
+{%endblock navsection%}
+
+{%load crispy_forms_tags%}
+
+
+{%block content%}
+	
+	<div style="margin: 50px">
+		<form name="forma" action="" method="post">
+				{% csrf_token %}
+				{{forma|crispy}}
+	  			<input type="button" class="btn btn-primary"
+	  			onclick="sacuvajUkucaninaIUgasiProzor()"
+	  			value="Додај" 
+	  			>
+		</form>
+	</div>
+
+
+<script type="text/javascript">
+	
+	function sacuvajUkucaninaIUgasiProzor(){
+		let xhttp = new XMLHttpRequest();
+		xhttp.open("POST","{%url 'api_sacuvaj_ukucanina_temp' %}",true);
+		xhttp.setRequestHeader("X-CSRFToken","{{csrf_token}}")
+		xhttp.setRequestHeader("Content-Type", "application/json");
+
+		ime = document.forms['forma'].elements['ime'].value;
+		prezime = document.forms['forma'].elements['prezime'].value;
+		starost = document.forms['forma'].elements['starost'].value;
+
+		let podaci = JSON.stringify({'ime':ime,'prezime':prezime,'starost':starost});
+		console.log(podaci);
+
+		//xhttp.send("ime="+ime+"&prezime="+prezime+"&starost="+starost);
+		xhttp.send(podaci)
+
+		xhttp.onreadystatechange = function(){
+			if(this.readyState == 4 && this.status == 200){
+				window.close();
+			}
+	    }
+	}	
+
+</script>
+
+
+{%endblock%}

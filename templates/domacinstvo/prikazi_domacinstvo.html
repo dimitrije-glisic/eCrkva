@@ -1,0 +1,227 @@
+{%extends 'base.html'%}
+
+{%load l10n%}
+
+{%load i18n%}
+
+
+
+{%block head%}
+
+
+{%endblock head%}
+
+
+{%block title%}
+	<title>Домаћинство</title>
+{%endblock title%}
+
+
+{%block content%}
+
+
+	<table class="table">
+		<legend style="border:none">Домаћинство</legend>
+		<tr>
+			<td><strong>Домаћин</strong></td>
+			<td>{{domacinstvo.ime_domacina}} {{domacinstvo.prezime_domacina}}</td>
+		</tr>
+		<tr>
+			<td><strong>Слава</strong></td>
+			<td>{{domacinstvo.slava1}}</td>
+		</tr>
+		<tr>
+			<td><strong>Адреса</strong></td>
+			<td>{{domacinstvo.adresa}}</td>
+		</tr>
+		<tr>
+			<td><strong>Укућани</strong></td>
+			<td>
+				{%for idx,u in ukucani%}
+					{{u}}
+				{%endfor%}
+			</td>
+		</tr>
+		<tr>
+			<td><strong>Наречени</strong></td>
+			<td>
+				{%for n in nareceni%}
+					{{n}} &nbsp;
+				{%endfor%}
+			</td>
+		</tr>
+		<tr>
+			<td><strong>Преминули</strong></td>
+			<td>
+				{%for idx, p in preminuli%}
+					{{p}},
+				{%endfor%}
+			</td>
+		</tr>
+		<tr>
+			<td><strong>Славска водица</strong></td>
+			<td>
+				{%if domacinstvo.slavska_vodica%}
+					<strong style="color: green">
+						Има
+					</strong>
+				{%else%}
+					<strong style="color: orange">
+						Нема
+					</strong>
+				{%endif%}
+			</td>
+		</tr>
+		<tr>
+			<td><strong>Васкршња водица</strong></td>
+			<td>
+				{%if domacinstvo.vaskrsnja_vodica%}
+					<strong style="color: green">
+						Има
+					</strong>
+				{%else%}
+					<strong style="color: orange">
+						Нема
+					</strong>
+				{%endif%}
+			</td>
+		</tr>
+		
+		
+	</table>
+
+<br>
+
+<br>
+
+
+
+{%if dogadjaji%}
+		<table class="table">
+			<legend style="border:none">Догађаји</legend>
+			<tr>
+				<th>Догађај</th>
+				<th>Датум</th>
+				<th>Време</th>
+			</tr>
+
+		{%for dogadjaj in dogadjaji %}
+			<tr>
+				<td>{{dogadjaj.tip_dogadjaja}}</td>
+				<td>
+				{%language 'sr'%}
+					{{dogadjaj.datum|date:"E j, Y "}}
+				{%endlanguage%}
+				</td>
+				<td>{{dogadjaj.vreme|date:"G:i"}}</td>
+				<td><button class="btn btn-sm btn-success"
+							onclick="promptPotvrdi({{dogadjaj.id}})">потврди
+					</button>
+				</td>
+				<td><button class="btn btn-sm btn-danger"
+							onclick="promptOtkazi({{dogadjaj.id}})" 
+					>откажи
+				</button></td>
+					
+			</tr>
+		{%endfor%}
+		</table>
+<hr>
+{%endif%}
+
+
+
+<div class="card" style="width: 18rem; margin: 40px 0px">
+  <div class="card-body">
+    
+
+	<h3 style="margin:30px 0px;width: 200px">Закажите догађај</h3>
+	<form action="{{request.path}}" method="post">
+			{%csrf_token%}
+
+	      <label>Догађај</label>
+	      <div class="form-group">
+			<select id="dogadjaj" name="dogadjaj" style="width: 200px" required="">
+				<option value=""></option>
+				<option>Славска водица</option>
+				<option>Васкршња водица</option>			
+				<option>Крштење</option>			
+				<option>Венчање</option>
+				<option>Сахрана</option>
+			</select>
+	      </div>
+
+	      <label>Датум и време</label>
+	      <div class="form-group" style="width: 200px">
+	        <div class='input-group date' id='datetimepicker1'>
+	          <input type='text' class="form-control" name="datum" required />
+	          <span class="input-group-addon">
+	            <span class="glyphicon glyphicon-calendar"></span>
+	          </span>
+	        </div>
+	      </div>
+
+		<button type="submit" class="btn btn-primary">Закажи</button>
+	</form>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+<script type="text/javascript">
+	$('#datetimepicker1').datetimepicker()
+
+	function otkaziDogadjaj(id){
+
+		let xhttp = new XMLHttpRequest();
+    	xhttp.open("POST","{%url 'api_otkazi_dogadjaj'%}",true);
+    	xhttp.setRequestHeader("X-CSRFToken","{{csrf_token}}");
+		xhttp.setRequestHeader("Content-Type", "application/json");
+    	podaci = JSON.stringify({'id': id})
+    	xhttp.send(podaci);
+
+	    xhttp.onreadystatechange = function(){
+	      if(this.readyState == 4 && this.status == 200){
+	          location.reload(true);
+	      }
+	    }
+	}
+
+	function potvrdiDogadjaj(id){
+
+		let xhttp = new XMLHttpRequest();
+		xhttp.open("POST","{%url 'api_potvrdi_dogadjaj'%}",true);
+		xhttp.setRequestHeader("X-CSRFToken","{{csrf_token}}")
+		xhttp.setRequestHeader("Content-Type","application/json");
+		podaci = JSON.stringify({'id':id});
+		xhttp.send(podaci);
+
+		xhttp.onreadystatechange = function(){
+			if(this.readyState == 4 && this.status == 200){
+				location.reload(true);
+			}
+		}
+
+	}
+
+	function promptOtkazi(id){
+		if (confirm("Отказаћете догађај")){
+			otkaziDogadjaj(id);
+		}
+	}
+
+	function promptPotvrdi(id){
+		if(confirm("Потврдићете догађај")){
+			potvrdiDogadjaj(id);
+		}
+	}
+
+
+</script>
+
+{%endblock content%}

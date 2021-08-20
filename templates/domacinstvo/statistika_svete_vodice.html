@@ -1,0 +1,36 @@
+{%extends 'base.html'%}
+
+
+{%block content%}
+
+<div style="margin-top: 100px;">
+    <h3>Свете водице</h3>
+
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>Има</th>
+            <th>Нема</th>
+        </tr>
+
+        <tr>
+            <th>Славска водица</th>
+            <td>{{slavska.ima}} ({{slavska.ima_procenat|floatformat}}&percnt;)</td>
+            <td>{{slavska.nema}} ({{slavska.nema_procenat|floatformat}}&percnt;)</td>
+        </tr>
+        <tr>
+            <th>Васкршња водица</th>
+            <td>{{vaskrsnja.ima}} ({{vaskrsnja.ima_procenat|floatformat}}&percnt;)</td>
+            <td>{{vaskrsnja.nema}} ({{vaskrsnja.nema_procenat|floatformat}}&percnt;)</td>
+        </tr>
+
+
+    </table>
+</div>
+
+
+
+
+
+
+{%endblock content%}
